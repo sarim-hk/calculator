@@ -1,7 +1,7 @@
 # calculator
 simple object oriented calculator
 
-prerequisites:  
 ```
+prerequisites:  
 PyQt5 #python module
 ```
