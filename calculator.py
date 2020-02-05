@@ -72,7 +72,6 @@ class main_widget(QWidget):
         try:
             self.multiply_unprefixed_brackets()
             self.multiply_unsuffixed_brackets()
-            print(self.to_calculate)
             self.output_label.setText(str(eval(self.to_calculate)))
             self.to_calculate = str(eval(self.to_calculate))
         except:
