@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, re
 from PyQt5.QtWidgets import *   
 from PyQt5.QtGui import QKeySequence, QIcon, QFont
 from PyQt5 import QtCore
@@ -29,6 +29,8 @@ class main_widget(QWidget):
         super().__init__()
 
         self.repeat_operator_list = ["+", "/", "*"]
+        self.operator_list = ["+", "/", "*","-"]
+        self.number_list = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
         self.button_info_list = [ [0,0,0] , [1,1,0] , [2,2,0] , [3,0,1] , [4,1,1] , [5,2,1] , [6,0,2] , [7,1,2], [8,2,2] , [9,0,3] , ["+",3,0], ["-",3,1] , ["/",3,2] , ["*",3,3] , ["(",1,3] , [")",2,3] ] #button text, x pos, y pos
         self.button_dict = {}
@@ -68,6 +70,9 @@ class main_widget(QWidget):
         
     def on_enter(self):
         try:
+            self.multiply_unprefixed_brackets()
+            self.multiply_unsuffixed_brackets()
+            print(self.to_calculate)
             self.output_label.setText(str(eval(self.to_calculate)))
             self.to_calculate = str(eval(self.to_calculate))
         except:
@@ -103,6 +108,26 @@ class main_widget(QWidget):
     def check_first_char(self):
         if self.to_calculate[0] in self.repeat_operator_list and len(self.to_calculate) <= 1:
             self.to_calculate = ""
+
+    def multiply_unprefixed_brackets(self):
+        self.indexes = [i for i, letter in enumerate(self.to_calculate) if letter == "("]
+        if len(self.to_calculate) > 1:
+            for self.index in self.indexes:
+                self.temp_array = list(self.to_calculate)
+                self.temp_array.insert(self.index, "*")
+                self.to_calculate = ""
+                for char in self.temp_array:
+                    self.to_calculate += char
+
+    def multiply_unsuffixed_brackets(self):
+        self.indexes = [i for i, letter in enumerate(self.to_calculate) if letter == ")"]
+        if len(self.to_calculate) > 1:
+            for self.index in self.indexes:
+                self.temp_array = list(self.to_calculate)
+                self.temp_array.insert(self.index+1, "*")
+                self.to_calculate = ""
+                for char in self.temp_array:
+                    self.to_calculate += char
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
