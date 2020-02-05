@@ -1,6 +1,6 @@
 import sys, os, re
 from PyQt5.QtWidgets import *   
-from PyQt5.QtGui import QKeySequence, QIcon, QFont
+from PyQt5.QtGui import QKeySequence, QIcon, QFont, QColor
 from PyQt5 import QtCore
 
 class main_window(QMainWindow):
@@ -21,8 +21,7 @@ class main_window(QMainWindow):
         self.CE_button.setShortcut("Backspace")
 
         self.C_button = self.main_menu.addAction("C")
-        self.C_button.triggered.connect(self.main.on_C_pressed)
-        
+        self.C_button.triggered.connect(self.main.on_C_pressed)   
         
 class main_widget(QWidget):
     def __init__(self):
@@ -48,6 +47,7 @@ class main_widget(QWidget):
             self.number_button = QPushButton(str(item[0]))
             self.number_button.setFixedSize(50,50)
             self.number_button.setShortcut(f"{item[0]}")
+            self.number_button.setStyleSheet("background-color: white")
             self.number_button.clicked.connect(self.on_num_operator_clicked)
             grid_layout.addWidget(self.number_button, item[2],item[1]) 
             
@@ -57,10 +57,11 @@ class main_widget(QWidget):
         # enter button
         self.enter_button = QPushButton("=")
         self.enter_button.setFixedSize(50,50)
-        grid_layout.addWidget(self.enter_button,4,3)
-        self.enter_button.clicked.connect(self.on_enter)
         self.enter_button.setShortcut("=")
         self.enter_button.setShortcut("Return")
+        self.enter_button.setStyleSheet("background-color: white")
+        self.enter_button.clicked.connect(self.on_enter)
+        grid_layout.addWidget(self.enter_button,4,3)
 
         #output label
         font = QFont("Arial", 12, QFont.Bold)
@@ -112,21 +113,23 @@ class main_widget(QWidget):
         self.indexes = [i for i, letter in enumerate(self.to_calculate) if letter == "("]
         if len(self.to_calculate) > 1:
             for self.index in self.indexes:
-                self.temp_array = list(self.to_calculate)
-                self.temp_array.insert(self.index, "*")
-                self.to_calculate = ""
-                for char in self.temp_array:
-                    self.to_calculate += char
+                if self.to_calculate[self.index-1] not in self.operator_list:
+                    self.temp_array = list(self.to_calculate)
+                    self.temp_array.insert(self.index, "*")
+                    self.to_calculate = ""
+                    for char in self.temp_array:
+                        self.to_calculate += char
 
     def multiply_unsuffixed_brackets(self):
         self.indexes = [i for i, letter in enumerate(self.to_calculate) if letter == ")"]
         if len(self.to_calculate) > 1:
             for self.index in self.indexes:
-                self.temp_array = list(self.to_calculate)
-                self.temp_array.insert(self.index+1, "*")
-                self.to_calculate = ""
-                for char in self.temp_array:
-                    self.to_calculate += char
+                if self.to_calculate[self.index+1] not in self.operator_list:
+                    self.temp_array = list(self.to_calculate)
+                    self.temp_array.insert(self.index+1, "*")
+                    self.to_calculate = ""
+                    for char in self.temp_array:
+                        self.to_calculate += char
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
@@ -135,4 +138,3 @@ if __name__ == '__main__':
     window.resize(225,0)
     window.show()
     sys.exit(app.exec_())
-    
